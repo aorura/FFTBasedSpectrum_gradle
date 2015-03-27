@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -15,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import ca.uol.aig.fftpack.RealDoubleFFT;
 
 
@@ -150,13 +151,15 @@ public class SoundRecordAndAnalysisActivity extends Activity implements OnClickL
         protected void onProgressUpdate(double[]... toTransform) {
         	Log.e("RecordingProgress", "Displaying in progress");
 
-            int halfHeight = 1200/2;
+            int halfHeight = 1200;
         	if (width > 512){
+                canvasDisplaySpectrum.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
         		for (int i = 0; i < toTransform[0].length; i++) {
                     int x = 4*i;
-                    int downy = (int) (halfHeight - (toTransform[0][i] * 10));
+                    int downy = (int) (halfHeight - (Math.abs(toTransform[0][i]) * 10));
                     int upy = halfHeight;
-                    //canvasDisplaySpectrum.drawLine(x, downy, x, upy, paintSpectrumDisplay);
+                    canvasDisplaySpectrum.drawLine(x, downy, x, upy, paintSpectrumDisplay);
                     canvasDisplaySpectrum.drawPoint(x, downy, redDot);
                     }
                     
@@ -326,10 +329,10 @@ public class SoundRecordAndAnalysisActivity extends Activity implements OnClickL
             
             mainActivity = this;
 
-            canvasDisplaySpectrum.drawLine(0, 10,  width, 10, paintSpectrumDisplay);
-            canvasDisplaySpectrum.drawLine(width, 0,  width, height, paintSpectrumDisplay);
-            canvasDisplaySpectrum.drawLine(width, height,  0, height, paintSpectrumDisplay);
-            canvasDisplaySpectrum.drawLine(0, height,  0, 0, paintSpectrumDisplay);
+            canvasDisplaySpectrum.drawLine(0, 0,  width, 0, paintSpectrumDisplay);
+            canvasDisplaySpectrum.drawLine(width-1, 0,  width-1, 1200, paintSpectrumDisplay);
+            canvasDisplaySpectrum.drawLine(width, 1200-1,  0, 1200-1, paintSpectrumDisplay);
+            canvasDisplaySpectrum.drawLine(0, 1200,  0, 0, paintSpectrumDisplay);
             Log.d("sung", "width: "  + width + " height:  " + height);
             
         }
